@@ -2,10 +2,30 @@ import Header from '../Header';
 import Footer from '../Footer';
 import '../../sass/Home.scss'
 import { useNavigate } from 'react-router-dom';
+import Information from './Information';
+import { useState } from 'react';
+import RegisterForCourse from './RegisterForCourse';
 
 function Home() {
     let navigate = useNavigate();
+    const [isClickInfo, setIsClickInfo] = useState(true);
+    const [isClickRegister, setIsClickRegister] = useState(false);
+    const [isClickCurriculum, setIsClickCurriculum] = useState(false);
 
+    const handleClickRegister = () => {
+        setIsClickRegister(true);
+        setIsClickInfo(false)
+    }
+    const handleClickInfo = () => {
+        setIsClickRegister(false);
+        setIsClickCurriculum(false);
+        setIsClickInfo(true)
+    }
+    const handleClickCurriculum = () => {
+        setIsClickRegister(false);
+        setIsClickInfo(false);
+        setIsClickCurriculum(true);
+    }
     return ( 
     <div className="home">
         <div className="container">
@@ -23,13 +43,14 @@ function Home() {
                     <img src="" alt="Ảnh đại diện" />
                 </div>
                 <div className='menu'>
-                    <a href="">THÔNG TIN SINH VIÊN</a>
-                    <a href="">ĐĂNG KÝ HỌC PHẦN</a>
-                    <a href="">CHƯƠNG TRÌNH KHUNG</a>
+                    <a href="#" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>
+                    <a href="#" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
+                    <a href="#" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
                 </div>
             </div>
-            <div className="information">
-                <h3>THÔNG TIN SINH VIÊN</h3>
+            {isClickInfo && <Information/>}
+            {isClickRegister && <RegisterForCourse/>}
+                {/* <h3>THÔNG TIN SINH VIÊN</h3>
                 <div className='info-detail'>
                     <div className='info-detail-left'>
                         <div>Khóa: <b>2020-2021</b></div>
@@ -43,8 +64,7 @@ function Home() {
                         <div>Chuyên ngành: <b>Kỹ thuật phần mềm</b></div>
                         <div>Cơ sở: <b>Cơ sở 1 (Thành phố Hồ Chí Minh)</b></div>
                     </div>
-                </div>
-            </div>
+                </div> */}
             <Footer/>
         </div>
     </div> );

@@ -84,5 +84,31 @@
                 }
             }
         }
+        .register{
+            border-left: 3px solid #3f9cf9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            margin-bottom: 20px;
+            h3{
+                color: #0051a2;
+            }
+            .choose-register{
+                display: flex;
+                .register-period{
+                    select{
+                        height: 30px;
+                    } 
+                }
+                .learning{
+                    color: red;
+                    margin-left: 20px;
+                    label{
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
     }
 }
