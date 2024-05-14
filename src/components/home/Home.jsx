@@ -1,31 +1,45 @@
 import Header from '../Header';
 import Footer from '../Footer';
 import '../../sass/Home.scss'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import Information from './Information';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RegisterForCourse from './RegisterForCourse';
+import axios from "axios";
+
 
 function Home() {
     let navigate = useNavigate();
-    const [isClickInfo, setIsClickInfo] = useState(true);
-    const [isClickRegister, setIsClickRegister] = useState(false);
-    const [isClickCurriculum, setIsClickCurriculum] = useState(false);
-
+    let location = useLocation();
+    const [student, setStudent] = useState({});
+    const [studentId, setStudentId] = useState();
+    const [majorId, setMajorId] = useState();
+    useEffect(() => {
+        let getApiStudentById = async () => {
+          let datas = await axios.get(`http://localhost:8080/accounts/student-code/${location.state.studentCode}`);
+          setStudent(datas.data.userId);
+          setStudentId(datas.data.id);
+          setMajorId(datas.data.userId.majorId?.id);
+        };
+        getApiStudentById();
+    }, [location.state?.studentCode]);
     const handleClickRegister = () => {
-        setIsClickRegister(true);
-        setIsClickInfo(false)
+        navigate('register-for-course',{state:{studentCode:location.state?.studentCode}})
     }
     const handleClickInfo = () => {
-        setIsClickRegister(false);
-        setIsClickCurriculum(false);
-        setIsClickInfo(true)
+        navigate('info',{state:{studentCode:location.state?.studentCode}});
     }
     const handleClickCurriculum = () => {
-        setIsClickRegister(false);
-        setIsClickInfo(false);
-        setIsClickCurriculum(true);
-    }
+        if (location.state?.studentCode) {
+          navigate('curriculum', {
+            state: {
+              studentCode: location.state.studentCode,
+              studentId: studentId,
+              majorId: majorId
+            }
+          });
+        }
+      }
     return ( 
     <div className="home">
         <div className="container">
@@ -33,38 +47,22 @@ function Home() {
             <div className="features">
                 <div className="features-info">
                     <div>Xin chào!</div>
-                    <div><b>Lê Thị Kim Ngân</b></div>
-                    <div>Giới tính: Nữ</div>
-                    <div>Mã số sinh viên: 20041421</div>
-                    <div>Trạng thái: Đang học</div>
+                    <div><b>{student.fullName}</b></div>
+                    <div>Giới tính: {student.gender?'Nam':'Nữ'}</div>
+                    <div>Mã số sinh viên: {location.state?.studentCode}</div>
+                    <div>Trạng thái: {student.status =='GRADUATE'?'Tốt nghiệp':'Đang học'}</div>
                     <button onClick={()=> navigate('/')}>Đăng xuất</button>
                 </div>
                 <div className='image'>
                     <img src="" alt="Ảnh đại diện" />
                 </div>
                 <div className='menu'>
-                    <a href="#" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>
-                    <a href="#" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
-                    <a href="#" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
+                    <a href="" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>
+                    <a href="" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
+                    <a href="" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
                 </div>
-            </div>
-            {isClickInfo && <Information/>}
-            {isClickRegister && <RegisterForCourse/>}
-                {/* <h3>THÔNG TIN SINH VIÊN</h3>
-                <div className='info-detail'>
-                    <div className='info-detail-left'>
-                        <div>Khóa: <b>2020-2021</b></div>
-                        <div>Bậc đào tạo: <b>Đại học</b></div>
-                        <div>Ngành: <b>Kỹ thuật phần mềm</b></div>
-                        <div>Khoa: <b>Khoa Công nghệ thông tin</b></div>
-                    </div>
-                    <div className='info-detail-right'>
-                        <div>Lớp: <b>Đại học Kỹ thuật phần mềm 16A</b></div>
-                        <div>Loại hình đào tạo: <b>Chính quy</b></div>
-                        <div>Chuyên ngành: <b>Kỹ thuật phần mềm</b></div>
-                        <div>Cơ sở: <b>Cơ sở 1 (Thành phố Hồ Chí Minh)</b></div>
-                    </div>
-                </div> */}
+            </div>            
+            <Outlet />
             <Footer/>
         </div>
     </div> );

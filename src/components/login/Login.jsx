@@ -25,7 +25,9 @@ function Login() {
                     <input id="password" type="password" placeholder='Nhập mật khẩu'/>
                 </div>
                 <div className="btn">
-                    <button onClick={()=>navigate('/home')}>ĐĂNG NHẬP</button>
+                    <button onClick={()=>navigate('/home/info', {
+                        state:{studentCode: 20040331}
+                    })}>ĐĂNG NHẬP</button>
                 </div>
             </div>
         </div>
