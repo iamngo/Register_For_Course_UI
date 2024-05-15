@@ -3,31 +3,56 @@ import "../../sass/Login.scss"
 import Header from '../Header';
 import Footer from '../Footer';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import bcrypt from 'bcryptjs';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function Login() {
     
-    const [phone, setPhone] = useState('');
+    const [studentCode, setStudentCode] = useState('');
     const [password, setPassword] = useState('');
     let navigate = useNavigate();
 
+    let handleLogin = async () => {
+        
+        let datas = await axios.get(`http://localhost:8080/accounts/student-code/${studentCode}`)
+        if(datas.data?.studentCode===studentCode){
+            if(bcrypt.compareSync(password, datas.data.password)){
+                navigate('/home/info',{state: {studentCode: studentCode}})
+            } else {
+                toast.error('Mật khẩu không chính xác!');
+            }
+        } else {
+            toast.error('Tài khoản không tồn tại!');
+        }
+    };
     return ( 
     <div className="container-login">
-        {/* <div className="header"></div> */}
+        <Toaster toastOptions={{ duration: 4000 }} />
         <Header/>
         <div className="body">
             <div className="form-login">
                 <div className="mssv">
                     <label htmlFor="mssv">Mã sinh viên</label>
-                    <input id="mssv" type="text" placeholder='Nhập mã sinh viên'/>
+                    <input 
+                        id="mssv" 
+                        type="text" 
+                        placeholder='Nhập mã sinh viên'
+                        value={studentCode}
+                        onChange={(e)=>setStudentCode(e.target.value)}/>
                 </div>
                 <div className="password">
                     <label htmlFor="password">Mật khẩu</label>
-                    <input id="password" type="password" placeholder='Nhập mật khẩu'/>
+                    <input 
+                        id="password" 
+                        type="password" 
+                        placeholder='Nhập mật khẩu'
+                        value={password}
+                        onChange={(e)=>setPassword(e.target.value)}/>
                 </div>
                 <div className="btn">
-                    <button onClick={()=>navigate('/home/info', {
-                        state:{studentCode: 20040331}
-                    })}>ĐĂNG NHẬP</button>
+                    <button onClick={handleLogin}>ĐĂNG NHẬP</button>
                 </div>
             </div>
         </div>

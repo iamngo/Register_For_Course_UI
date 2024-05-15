@@ -24,7 +24,12 @@ function Home() {
         getApiStudentById();
     }, [location.state?.studentCode]);
     const handleClickRegister = () => {
-        navigate('register-for-course',{state:{studentCode:location.state?.studentCode}})
+        navigate('register-for-course',{
+            state:{
+                studentCode:location.state?.studentCode,
+                studentId: studentId,
+                majorId: majorId
+            }})
     }
     const handleClickInfo = () => {
         navigate('info',{state:{studentCode:location.state?.studentCode}});
@@ -54,7 +59,7 @@ function Home() {
                     <button onClick={()=> navigate('/')}>Đăng xuất</button>
                 </div>
                 <div className='image'>
-                    <img src="" alt="Ảnh đại diện" />
+                    <img src="../../../public/user.png" alt="Ảnh đại diện" style={{width: '100%', height: '100%'}}/>
                 </div>
                 <div className='menu'>
                     <a href="" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>

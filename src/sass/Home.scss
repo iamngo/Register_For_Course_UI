@@ -85,14 +85,22 @@
             }
         }
         .register{
-            border-left: 3px solid #3f9cf9;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 80%;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
             h3{
                 color: #0051a2;
+                border-left: 3px solid #3f9cf9;
+                width: 100%;
+                text-align: center;
+            }
+            h4{
+                color: #f9803f;
+                border-left: 3px solid #f9803f;
+                width: 100%;
+                text-align: center;
             }
             .choose-register{
                 display: flex;
@@ -109,13 +117,26 @@
                     }
                 }
             }
+            .list-course, .list-course-section, .course-section-detail{
+                width: 100%;
+            }
+            .btn-register{
+                margin-top: 20px;
+                background-color: #f9803f;
+                border: none;
+                color: #fff;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+            }
         }
         .curriculum {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 80%;
-
+            margin-bottom: 50px;
           }
           
           .curriculum h3 {
@@ -151,7 +172,8 @@
           
           .curriculum-table tbody tr:hover {
             background-color: #dddddd;
+            cursor: pointer;
           }
-          
+        
     }
 }
