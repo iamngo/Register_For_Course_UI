@@ -56,7 +56,12 @@ function Curriculum() {
                                         <td>{item.credits}</td>
                                         <td>{item.number_of_theory_classes}</td>
                                         <td>{item.number_of_practice_classes}</td>
-                                        <td>{item.grades !== 'null' ? (item.grades >= 1 ? <FaCircleCheck   style={{color: 'green'}}/> : <FaCircleXmark style={{color: 'red'}}/>) : ''}</td>
+                                        <td>{item.evaluate !== 'null' ? (
+                                                    item.evaluate === 'F' ? 
+                                                        <FaCircleXmark style={{color: 'red'}}/> : 
+                                                        <FaCircleCheck   style={{color: 'green'}}/>)
+                                                :''}
+                                        </td>
                                     </tr>
                                 </React.Fragment>
                             );

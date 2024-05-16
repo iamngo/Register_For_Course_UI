@@ -3,14 +3,20 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import React from 'react';
 import { FaCircleXmark, FaCircleCheck } from "react-icons/fa6";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function RegisterForCourse() {
     let location = useLocation();
+    let { courseYear } = location.state.student;
     const [listCourse, setListCourse] = useState([]);
     const [listCourseSection, setListCourseSection] = useState([]);
     const [selectedCourseId, setSelectedCourseId] = useState(null);
     const [courseSectionDetail, setCourseSectionDetail] = useState([]);
     const [selectedSectionId, setSelectedSectionId] = useState(null);
+    const [courseSectionRegistered, setCourseSectionRegistered] = useState([]);
+    const [selectedOption, setSelectedOption] = useState('');
+
     useEffect(() => {
         let getListCourseById = async () => {
           let datas = await axios.get(`http://localhost:8080/courses/${location.state.studentId}/${location.state.majorId}`);
@@ -18,6 +24,14 @@ function RegisterForCourse() {
         };
         getListCourseById();
     }, [location.state]);
+
+    useEffect(() => {
+        let getCourseSectionRegistered = async () => {
+            let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${selectedOption}`);
+            setCourseSectionRegistered(datas.data);
+        };
+        getCourseSectionRegistered();
+    },[selectedOption]);
 
     let handleClickCourse = async (majorId) => {
         let datas = await axios.get(`http://localhost:8080/course-sections/${majorId}`)
@@ -32,29 +46,57 @@ function RegisterForCourse() {
         setSelectedSectionId(sectionId);
     }
 
+    const generateOptions = (startYear, numYears) => {
+        const options = [];
+        const endYear = startYear + numYears - 1; // Tính năm kết thúc
+        for (let year = startYear; year <= endYear; year++) {
+          const nextYear = year + 1;
+          const yearString = `${year}-${nextYear}`;
+          options.push(
+            <option key={`HK1(${yearString})`} value={`HK1 (${yearString})`}>HK1 ({yearString})</option>,
+            <option key={`HK2(${yearString})`} value={`HK2 (${yearString})`}>HK2 ({yearString})</option>,
+            <option key={`HK3(${yearString})`} value={`HK3 (${yearString})`}>HK3 ({yearString})</option>
+          );
+        }
+        return options;
+      };
+      
+    const handleChange = (e) => {
+        setSelectedOption(e.target.value);
+    };
+
+    const handleRegister = async () => {
+        if (!selectedCourseId || !selectedSectionId) {
+            toast.error("Vui lòng chọn môn học và lớp học phần.");
+            return;
+        }
+        try {
+            await axios.post('http://localhost:8080/grades', {
+                studentId: location.state.studentId,
+                courseSectionId: selectedSectionId,
+                courseId: selectedCourseId,
+            });
+            toast.success("Đăng ký thành công!");
+            // Cập nhật lại danh sách lớp học phần đã đăng ký sau khi đăng ký thành công
+            let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${selectedOption}`);
+            setCourseSectionRegistered(datas.data);
+        } catch (error) {
+            console.error("Đăng ký thất bại: ", error);
+            toast.error("Đăng ký thất bại.");
+        }
+    };
+
     return ( 
     <div className="register">
+        <Toaster toastOptions={{ duration: 4000 }} />
         <h3>ĐĂNG KÝ HỌC PHẦN</h3>
         <div className="choose-register">
             <div className="register-period">
                 <label htmlFor="register">Đợt đăng ký:</label>
-                <select name="register-period" id="register">
-                    <option value="53">HK3(2024-2025)</option>
-                    <option value="52">HK2(2024-2025)</option>
-                    <option value="51">HK1(2024-2025)</option>
-                    <option value="43">HK3(2023-2024)</option>
-                    <option value="42">HK2(2023-2024)</option>
-                    <option value="41">HK1(2023-2024)</option>
-                    <option value="33">HK3(2022-2023)</option>
-                    <option value="32">HK2(2022-2023)</option>
-                    <option value="31">HK1(2022-2023)</option>
-                    <option value="23">HK3(2021-2022)</option>
-                    <option value="22">HK2(2021-2022)</option>
-                    <option value="21">HK1(2021-2022)</option>
-                    <option value="13">HK3(2020-2021)</option>
-                    <option value="12">HK2(2020-2021)</option>
-                    <option value="11">HK1(2020-2021)</option>
-                </select>
+                <select name="register-period" id="register" value={selectedOption} onChange={handleChange}>
+                        <option value="" disabled>Chọn học kỳ</option>
+                        {generateOptions(parseInt(courseYear.split('-')[0], 10), 5)}
+                    </select>
             </div>
             <div className="learning">
                 <input type="radio" id="new" name="learning" value="learnNew" checked/>
@@ -160,7 +202,43 @@ function RegisterForCourse() {
                 </table>
             </div>
         </div>
-        <button className="btn-register">Đăng ký môn học</button>
+        <button className="btn-register" onClick={handleRegister}>Đăng ký môn học</button>
+
+        <div className="course-section-registered">
+            <h4>LỚP HỌC PHẦN ĐÃ ĐĂNG KÝ TRONG HỌC KÌ NÀY</h4>
+            <div className="curriculum-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã lớp học phần</th>
+                            <th>Tên lớp học phần</th>
+                            <th>Lớp dự kiến</th>
+                            <th>Số tín chỉ</th>
+                            <th>Giảng viên lý thuyết</th>
+                            <th>Giảng viên thực hành</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {courseSectionRegistered?.map((item, index) => {
+                                return (
+                                        <tr key={index} onClick={()=> handleClickCourseSection(item.id)} style={{ backgroundColor: selectedSectionId === item.id ? '#fff6b0' : '' }}>
+                                            <td>{index+1}</td>
+                                            <td>{item.sectionCode}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.className}</td>
+                                            <td>{item.credits}</td>
+                                            <td>{item.lecture_theory}</td>
+                                            <td>{item.lecture_practice}</td>
+                                            <td>{item.status==true? "Đã khóa":"Chờ sinh viên đăng ký"}</td>
+                                        </tr>
+                                );
+                            })}
+                        </tbody>
+                </table>
+            </div>
+        </div>
     </div> );
 }
 

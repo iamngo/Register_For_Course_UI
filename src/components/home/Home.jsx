@@ -28,7 +28,8 @@ function Home() {
             state:{
                 studentCode:location.state?.studentCode,
                 studentId: studentId,
-                majorId: majorId
+                majorId: majorId,
+                student: student
             }})
     }
     const handleClickInfo = () => {
@@ -40,7 +41,7 @@ function Home() {
             state: {
               studentCode: location.state.studentCode,
               studentId: studentId,
-              majorId: majorId
+              majorId: majorId,
             }
           });
         }
