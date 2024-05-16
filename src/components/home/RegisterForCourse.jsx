@@ -16,7 +16,12 @@ function RegisterForCourse() {
     const [selectedSectionId, setSelectedSectionId] = useState(null);
     const [courseSectionRegistered, setCourseSectionRegistered] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
-
+    let maxQuantityLT = 60;
+    let maxQuantityTH = 30;
+    const [registeredQuantity, setRegisteredQuantity] = useState(0);
+    const [selectedDetailSectionId, setSelectedDetailSectionId] = useState(null);
+    const [lectureTheoryId, setLectureTheoryId] = useState(null);
+    let studentId = location.state.studentId;
     useEffect(() => {
         let getListCourseById = async () => {
           let datas = await axios.get(`http://localhost:8080/courses/${location.state.studentId}/${location.state.majorId}`);
@@ -27,23 +32,41 @@ function RegisterForCourse() {
 
     useEffect(() => {
         let getCourseSectionRegistered = async () => {
-            let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${selectedOption}`);
+            let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${location.state.studentId}/${selectedOption}`);
             setCourseSectionRegistered(datas.data);
         };
         getCourseSectionRegistered();
     },[selectedOption]);
 
+    useEffect(() => {
+        // Tìm id của bài giảng lý thuyết khi danh sách chi tiết lớp học phần thay đổi
+        const theoryLectureId = courseSectionDetail.find(item => item.type === 'LT')?.lectureId;
+        setLectureTheoryId(theoryLectureId);
+    }, [courseSectionDetail]);
+
     let handleClickCourse = async (majorId) => {
         let datas = await axios.get(`http://localhost:8080/course-sections/${majorId}`)
         setListCourseSection(datas.data);
         setSelectedCourseId(majorId);
+        setSelectedSectionId(null);
+        setSelectedDetailSectionId(null);
+        setCourseSectionDetail([]);
     }
 
     let handleClickCourseSection = async (sectionId) => {
         let datas = await axios.get(`http://localhost:8080/course-sections/detail-course-section/${sectionId}`)
-        console.log(datas.data);
         setCourseSectionDetail(datas.data);
         setSelectedSectionId(sectionId);
+    }
+
+    let handleClickDetailSection = (lectureId) => {
+        setSelectedDetailSectionId(lectureId);
+        
+    }
+
+    let handleRegisteredQuantity = async (sectionId) => {
+        let datas = await axios.get(`http://localhost:8080/course-sections/student-enrollment-numbers/${sectionId}`)
+        setRegisteredQuantity(datas.data);
     }
 
     const generateOptions = (startYear, numYears) => {
@@ -66,23 +89,30 @@ function RegisterForCourse() {
     };
 
     const handleRegister = async () => {
-        if (!selectedCourseId || !selectedSectionId) {
-            toast.error("Vui lòng chọn môn học và lớp học phần.");
+        if (!selectedCourseId || !selectedSectionId || selectedOption=='' || !selectedDetailSectionId) {
+            toast.error("Vui lòng chọn học kì, môn học, lớp học phần và nhóm thực hành.");
             return;
         }
         try {
-            await axios.post('http://localhost:8080/grades', {
-                studentId: location.state.studentId,
-                courseSectionId: selectedSectionId,
-                courseId: selectedCourseId,
-            });
-            toast.success("Đăng ký thành công!");
-            // Cập nhật lại danh sách lớp học phần đã đăng ký sau khi đăng ký thành công
-            let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${selectedOption}`);
-            setCourseSectionRegistered(datas.data);
+            const response = await axios.post(`http://localhost:8080/grades?studentId=${location.state.studentId}&courseSectionId=${selectedSectionId}&courseId=${selectedCourseId}&lectureTheoryId=${lectureTheoryId}&lecturePracticeId=${selectedDetailSectionId}&semester=${selectedOption}`);
+            console.log(response);
+            if (response.data === 'Success') {
+                toast.success("Đăng ký thành công!");
+                // Cập nhật lại danh sách lớp học phần đã đăng ký sau khi đăng ký thành công
+                let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${location.state.studentId}/${selectedOption}`);
+                setCourseSectionRegistered(datas.data);
+            } else if (response.data === 'Class schedules clash') {
+                toast.error("Trùng lịch học!");
+            } else if (response.data === 'credits cannot be greater than 30') {
+                toast.error("Vượt quá 30 tín chỉ!");
+            } else if (response.data === 'You have not completed the prerequisite course') {
+                toast.error("Bạn chưa vượt qua môn học tiên quyết của môn học này!");
+            } else {
+                toast.error("Đăng ký thất bại!");
+            }
         } catch (error) {
             console.error("Đăng ký thất bại: ", error);
-            toast.error("Đăng ký thất bại.");
+            toast.error("Đăng ký thất bại!");
         }
     };
 
@@ -158,14 +188,15 @@ function RegisterForCourse() {
                     </thead>
                     <tbody>
                             {listCourseSection.map((item, index) => {
+                               handleRegisteredQuantity(item.id);
                                 return (
                                         <tr key={index} onClick={()=> handleClickCourseSection(item.id)} style={{ backgroundColor: selectedSectionId === item.id ? '#fff6b0' : '' }}>
                                             <td>{index+1}</td>
                                             <td>{item.sectionCode}</td>
                                             <td>{item.name}</td>
                                             <td>{item.className}</td>
-                                            <td>{item.maxQuantity}</td>
-                                            <td>{item.registeredQuantity}</td>
+                                            <td>{maxQuantityLT}</td>
+                                            <td>{registeredQuantity}</td>
                                             <td>{item.status==true? "Đã khóa":"Chờ sinh viên đăng ký"}</td>
                                         </tr>
                                 );
@@ -185,16 +216,21 @@ function RegisterForCourse() {
                             <th>Lịch học</th>
                             <th>Phòng học</th>
                             <th>Giảng viên</th>
+                            <th>Đã đăng ký</th>
                         </tr>
                     </thead>
                     <tbody>
                             {courseSectionDetail.map((item, index) => {
                                 return (
-                                        <tr key={index}>
+                                        <tr key={index} 
+                                            style={{ backgroundColor: item.type === 'LT' ? '#fff6b0' : (selectedDetailSectionId === item.lectureId? '#fff6b0':''), pointerEvents: item.type === 'LT' ? 'none' : 'auto' }} 
+                                            onClick={()=>handleClickDetailSection(item.lectureId)}
+                                        >
                                             <td>{index+1}</td>
                                             <td>{`T${item.dayOfWeek} (${item.shift})`}</td>
                                             <td>{item.buildings}</td>
-                                            <td>{item.lectures}</td>
+                                            <td>{`${item.lectures} (${item.type})`}</td>
+                                            <td>{item.type==='TH'? `${item.studentEnrollmentNumbers}/30`:`${item.studentEnrollmentNumbers}`}</td>
                                         </tr>
                                 );
                             })}
@@ -223,7 +259,7 @@ function RegisterForCourse() {
                     <tbody>
                             {courseSectionRegistered?.map((item, index) => {
                                 return (
-                                        <tr key={index} onClick={()=> handleClickCourseSection(item.id)} style={{ backgroundColor: selectedSectionId === item.id ? '#fff6b0' : '' }}>
+                                        <tr key={index} >
                                             <td>{index+1}</td>
                                             <td>{item.sectionCode}</td>
                                             <td>{item.name}</td>
