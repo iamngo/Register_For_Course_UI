@@ -55,12 +55,15 @@
             }
             .menu{
                 display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: flex-start;
-                margin-left: 20px;
-                a{
-                    margin: 5px;
+                .menu-left, .menu-right{
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start;
+                    margin-left: 50px;
+                    a{
+                        margin: 5px;
+                    }
                 }
             }
         }
@@ -84,7 +87,7 @@
                 }
             }
         }
-        .register{
+        .register, .grades{
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -174,6 +177,8 @@
             background-color: #dddddd;
             cursor: pointer;
           }
-        
+        .grades{
+
+        }
     }
 }
