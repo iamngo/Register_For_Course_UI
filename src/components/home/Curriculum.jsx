@@ -56,10 +56,11 @@ function Curriculum() {
                                         <td>{item.credits}</td>
                                         <td>{item.number_of_theory_classes}</td>
                                         <td>{item.number_of_practice_classes}</td>
-                                        <td>{item.evaluate !== 'null' ? (
-                                                    item.evaluate === 'F' ? 
-                                                        <FaCircleXmark style={{color: 'red'}}/> : 
-                                                        <FaCircleCheck   style={{color: 'green'}}/>)
+                                        <td>{item.result !== 'null' ? (
+                                                    item.result === 'Đạt' ? 
+                                                        <FaCircleCheck   style={{color: 'green'}}/>:
+                                                        <FaCircleXmark style={{color: 'red'}}/>  
+                                                        )
                                                 :''}
                                         </td>
                                     </tr>

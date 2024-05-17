@@ -74,13 +74,13 @@ function Home() {
                 <div className='menu'>
                     <div className='menu-left'>
                         <a href="" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>
-                        <a href="" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
-                        <a href="" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
+                        <a href="" onClick={handleClickGrades}>KẾT QUẢ HỌC TẬP</a>
                     </div>
                     <div className='menu-right'>
-                        <a href="" onClick={handleClickRegister}>XEM LỊCH HỌC</a>
-                        <a href="" onClick={handleClickGrades}>XEM ĐIỂM</a>
-                        <a href="" onClick={handleClickCurriculum}>TRA CỨU CÔNG NỢ</a>
+                        <a href="" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
+                        <a href="" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
+                        {/* <a href="" onClick={handleClickRegister}>XEM LỊCH HỌC</a>
+                        <a href="" onClick={handleClickCurriculum}>TRA CỨU CÔNG NỢ</a> */}
                     </div>
                 </div>
             </div>            
