@@ -87,7 +87,7 @@
                 }
             }
         }
-        .register, .grades{
+        .register, .grades, .schedules{
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -179,6 +179,31 @@
           }
         .grades{
 
+        }
+        .schedules{
+            .schedules-options{
+                height: 20px;
+                display: flex;
+                width: 100%;
+                justify-content: flex-end;
+                gap: 20px;
+                input, button {
+                    cursor: pointer;
+                    background-color:#0d79e4;
+                    color: #fff;
+                    border: none;
+                    font-weight: 600;
+                    
+                }
+                button:hover{
+                    background-color:#e7f1ff;
+                    color: #0d79e4;
+                }
+            }
+            
+            th, td{
+                border: 1px solid #cbe8ff;
+            }
         }
     }
 }

@@ -34,6 +34,7 @@ function RegisterForCourse() {
         let getCourseSectionRegistered = async () => {
             let datas = await axios.get(`http://localhost:8080/course-sections/registered-course-section/${location.state.studentId}/${selectedOption}`);
             setCourseSectionRegistered(datas.data);
+            console.log(datas.data);
         };
         getCourseSectionRegistered();
     },[selectedOption]);
@@ -56,6 +57,8 @@ function RegisterForCourse() {
     let handleClickCourseSection = async (sectionId) => {
         let datas = await axios.get(`http://localhost:8080/course-sections/detail-course-section/${sectionId}`)
         setCourseSectionDetail(datas.data);
+        console.log(datas.data);
+        console.log(sectionId);
         setSelectedSectionId(sectionId);
     }
 
@@ -81,7 +84,7 @@ function RegisterForCourse() {
             <option key={`HK3(${yearString})`} value={`HK3 (${yearString})`}>HK3 ({yearString})</option>
           );
         }
-        return options;
+        return options.reverse();
       };
       
     const handleChange = (e) => {
@@ -116,6 +119,11 @@ function RegisterForCourse() {
         }
     };
 
+    const getDay = (dayOfWeek) => {
+        const days = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"];
+        return days[dayOfWeek];
+      };
+    
     return ( 
     <div className="register">
         <Toaster toastOptions={{ duration: 4000 }} />
@@ -227,7 +235,7 @@ function RegisterForCourse() {
                                             onClick={()=>handleClickDetailSection(item.lectureId)}
                                         >
                                             <td>{index+1}</td>
-                                            <td>{`T${item.dayOfWeek} (${item.shift})`}</td>
+                                            <td>{`${getDay(item.dayOfWeek)} (${item.shift})`}</td>
                                             <td>{item.buildings}</td>
                                             <td>{`${item.lectures} (${item.type})`}</td>
                                             <td>{item.type==='TH'? `${item.studentEnrollmentNumbers}/30`:`${item.studentEnrollmentNumbers}`}</td>

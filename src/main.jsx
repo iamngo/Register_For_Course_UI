@@ -8,6 +8,7 @@ import Information from './components/home/Information.jsx'
 import Curriculum from './components/home/Curriculum.jsx'
 import RegisterForCourse from './components/home/RegisterForCourse.jsx'
 import Grades from './components/home/Grades.jsx'
+import Schedules from './components/home/Schedules.jsx'
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="curriculum" element={<Curriculum />} />
           <Route path="register-for-course" element={<RegisterForCourse />} />
           <Route path="grades" element={<Grades />} />
+          <Route path="schedules" element={<Schedules />} />
         </Route>
       </Routes>
     </BrowserRouter>

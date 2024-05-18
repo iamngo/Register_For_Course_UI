@@ -55,6 +55,15 @@ function Home() {
             }
         })
     }
+
+    const handleClickSchedules = () => {
+        navigate('schedules', {
+            state: {
+                studentCode: location.state.studentCode,
+                studentId: studentId
+            }
+        })
+    }
     return ( 
     <div className="home">
         <div className="container">
@@ -75,12 +84,11 @@ function Home() {
                     <div className='menu-left'>
                         <a href="" onClick={handleClickInfo}>THÔNG TIN SINH VIÊN</a>
                         <a href="" onClick={handleClickGrades}>KẾT QUẢ HỌC TẬP</a>
+                        <a href="" onClick={handleClickSchedules}>XEM LỊCH HỌC</a>
                     </div>
                     <div className='menu-right'>
                         <a href="" onClick={handleClickRegister}>ĐĂNG KÝ HỌC PHẦN</a>
                         <a href="" onClick={handleClickCurriculum}>CHƯƠNG TRÌNH KHUNG</a>
-                        {/* <a href="" onClick={handleClickRegister}>XEM LỊCH HỌC</a>
-                        <a href="" onClick={handleClickCurriculum}>TRA CỨU CÔNG NỢ</a> */}
                     </div>
                 </div>
             </div>            
