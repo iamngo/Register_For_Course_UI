@@ -26,9 +26,11 @@ function RegisterForCourse() {
         let getListCourseById = async () => {
           let datas = await axios.get(`http://localhost:8080/courses/${location.state.studentId}/${location.state.majorId}`);
           setListCourse(datas.data);
+          setListCourseSection([]);
+          setCourseSectionDetail([])
         };
         getListCourseById();
-    }, [location.state]);
+    }, [location.state, courseSectionRegistered]);
 
     useEffect(() => {
         let getCourseSectionRegistered = async () => {
@@ -37,7 +39,7 @@ function RegisterForCourse() {
             console.log(datas.data);
         };
         getCourseSectionRegistered();
-    },[selectedOption]);
+    },[selectedOption, registeredQuantity]);
 
     useEffect(() => {
         // Tìm id của bài giảng lý thuyết khi danh sách chi tiết lớp học phần thay đổi
@@ -52,13 +54,13 @@ function RegisterForCourse() {
         setSelectedSectionId(null);
         setSelectedDetailSectionId(null);
         setCourseSectionDetail([]);
+        console.log(datas.data);
     }
 
     let handleClickCourseSection = async (sectionId) => {
         let datas = await axios.get(`http://localhost:8080/course-sections/detail-course-section/${sectionId}`)
         setCourseSectionDetail(datas.data);
         console.log(datas.data);
-        console.log(sectionId);
         setSelectedSectionId(sectionId);
     }
 
@@ -224,6 +226,7 @@ function RegisterForCourse() {
                             <th>Lịch học</th>
                             <th>Phòng học</th>
                             <th>Giảng viên</th>
+                            <th>Thời gian</th>
                             <th>Đã đăng ký</th>
                         </tr>
                     </thead>
@@ -238,6 +241,7 @@ function RegisterForCourse() {
                                             <td>{`${getDay(item.dayOfWeek)} (${item.shift})`}</td>
                                             <td>{item.buildings}</td>
                                             <td>{`${item.lectures} (${item.type})`}</td>
+                                            <td>{`Từ ${item.startTime} đến ${item.endTime}`}</td>
                                             <td>{item.type==='TH'? `${item.studentEnrollmentNumbers}/30`:`${item.studentEnrollmentNumbers}`}</td>
                                         </tr>
                                 );

@@ -65,7 +65,7 @@ function Schedules() {
                             border: '1px solid #ccc', 
                             padding: '5px', 
                             margin: '5px 0', 
-                            backgroundColor: item.type === 'LT' ? '#ccc' : '#fff6b0' 
+                            backgroundColor: item.type === 'LT' ? '#ccc' : '#fff6b0',                           
                         }}
                     >
                         <b>{item.name}</b> <br />
