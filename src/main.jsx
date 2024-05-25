@@ -13,7 +13,7 @@ import Schedules from './components/home/Schedules.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename='/Register_For_Course_UI'>
       <Routes>
         <Route path='/' element={<App />}/>
         <Route path='/home' element={<Home />}>
