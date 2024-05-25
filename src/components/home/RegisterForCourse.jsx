@@ -161,7 +161,7 @@ function RegisterForCourse() {
                         </tr>
                     </thead>
                     <tbody>
-                            {listCourse.map((item, index) => {
+                            {selectedOption ==='HK1 (2024-2025)'? listCourse.map((item, index) => {
                                 return (
                                         <tr key={index} onClick={()=>handleClickCourse(item.id)} style={{ backgroundColor: selectedCourseId === item.id ? '#fff6b0' : '' }}>
                                             <td>{index+1}</td>
@@ -173,7 +173,7 @@ function RegisterForCourse() {
                                             <td>{item.hasPrerequisite}</td>
                                         </tr>
                                 );
-                            })}
+                            }):<p style={{color: 'red'}}>Học kì này chưa được phép đăng ký</p>}
                         </tbody>
                 </table>
             </div>
